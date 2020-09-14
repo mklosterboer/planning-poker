@@ -7,19 +7,22 @@ import NotFoundPage from './Components/NotFoundPage';
 import { Container } from 'react-bootstrap';
 import { UserProvider } from './Contexts/UserContext/UserStore';
 import FirebaseProvider from './Contexts/FirebaseContext/FirebaseStore';
+import { SessionProvider } from './Contexts/SessionContext/SessionStore';
 
 function App() {
   return (
     <Container fluid>
       {/* <Header /> */}
-      <UserProvider>
-        <FirebaseProvider>
-          <Switch>
-            <Route path="/" exact component={HomePage} />
-            <Route component={NotFoundPage} />
-          </Switch>
-        </FirebaseProvider>
-      </UserProvider>
+      <SessionProvider>
+        <UserProvider>
+          <FirebaseProvider>
+            <Switch>
+              <Route path="/" exact component={HomePage} />
+              <Route component={NotFoundPage} />
+            </Switch>
+          </FirebaseProvider>
+        </UserProvider>
+      </SessionProvider>
     </Container>
   );
 }

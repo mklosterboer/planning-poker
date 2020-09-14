@@ -4,8 +4,9 @@ import Firebase from 'firebase'
 import 'firebase/database';
 
 import { UserStore } from "../UserContext/UserStore";
-// import { SessionStore } from "../SessionContext/SessionStore";
-import { ActionType, User } from '../UserContext/Models';
+import { SessionStore } from "../SessionContext/SessionStore";
+import { ActionType as UserActionType, User } from '../UserContext/Models';
+import { ActionType as SessionActionType, Session } from '../SessionContext/Models';
 
 /* TODO: 
 - Add actions that point back to the user and session context
@@ -20,6 +21,7 @@ interface IFirebaseContextState {
         setDbValue: (newValue: string) => void;
         addUser: (newUser: User) => void;
         getUsers: () => void;
+        createSession: (newSession: Session) => void;
     }
 }
 
@@ -31,7 +33,7 @@ export { FirebaseContext }
 const FirebaseProvider: React.FC = ({ children }) => {
 
     const userContext = useContext(UserStore);
-    // const sessionStore = useContext(SessionStore);
+    const sessionContext = useContext(SessionStore);
 
     // check if firebase app has been initialized previously
     // if not, initialize with the config we saved earlier
@@ -52,7 +54,7 @@ const FirebaseProvider: React.FC = ({ children }) => {
                 displayName: vals["-MGLL4bldy3BSZ-f7kyD"]
             }
 
-            userContext.dispatch({ type: ActionType.SET_USER, user: newUser });
+            userContext.dispatch({ type: UserActionType.SET_USER, user: newUser });
         });
     }
 
@@ -83,7 +85,7 @@ const FirebaseProvider: React.FC = ({ children }) => {
 
                 userContext.dispatch(
                     {
-                        type: ActionType.SET_USER,
+                        type: UserActionType.SET_USER,
                         user: _records[latestVal - 1]
                     })
             });
@@ -99,6 +101,22 @@ const FirebaseProvider: React.FC = ({ children }) => {
             });
     }
 
+    function createSession(newSession: Session) {
+        getApp().database()
+            .ref("sessions/")
+            .push()
+            .set(newSession, () => {
+                sessionContext.dispatch(
+                    {
+                        type: SessionActionType.CREATE_SESSION,
+                        session: newSession
+                    });
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    }
+
     const firebaseApp: IFirebaseContextState = {
         app: getApp(),
         database: getApp().database(),
@@ -106,7 +124,8 @@ const FirebaseProvider: React.FC = ({ children }) => {
             getDbValue,
             setDbValue,
             addUser,
-            getUsers
+            getUsers,
+            createSession
         }
     }
 

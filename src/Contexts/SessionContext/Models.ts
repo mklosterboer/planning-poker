@@ -1,4 +1,4 @@
-import { UserContextModels } from "../UserContext";
+import { User } from "../UserContext/Models";
 
 export interface ISessionContext {
     state: ISessionContextState;
@@ -8,7 +8,7 @@ export interface ISessionContext {
 export interface Vote {
     userId: string;
     pollId: string;
-    value:string;
+    value: string;
 }
 
 export interface Poll {
@@ -20,7 +20,7 @@ export interface Poll {
 export interface Session {
     id: string;
     displayName: string;
-    users: UserContextModels.User[]
+    // users: User[]
 }
 
 export interface ISessionContextState {
