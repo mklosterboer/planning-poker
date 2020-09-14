@@ -22,6 +22,7 @@ interface IFirebaseContextState {
         addUser: (newUser: User) => void;
         getUsers: () => void;
         createSession: (newSession: Session) => void;
+        getUsersForSession: (sessionID: string) => void;
     }
 }
 
@@ -91,9 +92,28 @@ const FirebaseProvider: React.FC = ({ children }) => {
             });
     }
 
+    function getUsersForSession(sessionId: string) {
+        getApp().database()
+            .ref(`users/${sessionId}`)
+            .on("value", snapshot => {
+                const vals = snapshot.val();
+                const _records = [];
+
+                for (var key in vals) {
+                    _records.push(vals[key]);
+                }
+
+                sessionContext.dispatch(
+                    {
+                        type: SessionActionType.SET_USERS,
+                        users: _records
+                    })
+            });
+    }
+
     function addUser(newUser: User) {
         getApp().database()
-            .ref("users/")
+            .ref(`users/${newUser.sessionId}/`)
             .push()
             .set(newUser)
             .catch(error => {
@@ -125,7 +145,8 @@ const FirebaseProvider: React.FC = ({ children }) => {
             setDbValue,
             addUser,
             getUsers,
-            createSession
+            createSession,
+            getUsersForSession
         }
     }
 

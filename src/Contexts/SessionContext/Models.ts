@@ -20,16 +20,18 @@ export interface Poll {
 export interface Session {
     id: string;
     displayName: string;
-    // users: User[]
 }
 
 export interface ISessionContextState {
     session: Session | null;
+    users: User[]
 }
 
 export enum ActionType {
-    CREATE_SESSION
+    CREATE_SESSION,
+    SET_USERS
 }
 
-export type UserContextAction =
+export type SessionContextAction =
     | { type: ActionType.CREATE_SESSION; session: Session }
+    | { type: ActionType.SET_USERS; users: User[] }

@@ -8,6 +8,7 @@ import { Container } from 'react-bootstrap';
 import { UserProvider } from './Contexts/UserContext/UserStore';
 import FirebaseProvider from './Contexts/FirebaseContext/FirebaseStore';
 import { SessionProvider } from './Contexts/SessionContext/SessionStore';
+import { SessionLeader } from './Components/SessionLeader';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
           <FirebaseProvider>
             <Switch>
               <Route path="/" exact component={HomePage} />
+              <Route path="/session/:id" component={SessionLeader} />
               <Route component={NotFoundPage} />
             </Switch>
           </FirebaseProvider>

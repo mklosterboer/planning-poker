@@ -4,9 +4,11 @@ import { UserStore } from "../Contexts/UserContext/UserStore";
 import { FirebaseContext } from "../Contexts/FirebaseContext/FirebaseStore";
 import { Session } from "../Contexts/SessionContext/Models";
 import { SessionStore } from "../Contexts/SessionContext/SessionStore";
+import { useHistory } from "react-router-dom";
 
 function HomePage() {
     // const [dbValue, setDbValue] = React.useState("initialValue");
+    const history = useHistory();
 
     const { state } = useContext(UserStore);
     const { state: sessionState } = useContext(SessionStore);
@@ -19,7 +21,7 @@ function HomePage() {
     function setValue() {
         api?.addUser({
             id: "123",
-            sessionId: "321",
+            sessionId: "161742",
             displayName: "New User 5"
         });
     }
@@ -35,6 +37,8 @@ function HomePage() {
         };
 
         api?.createSession(newSession);
+
+        history.push(`/session/${newID}`);
         // TODO: Redirect to existing session page
     }
 
