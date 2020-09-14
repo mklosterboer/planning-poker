@@ -1,11 +1,10 @@
-import firebase from "firebase/app";
 import 'firebase/database';
 
 const projectId = process.env.REACT_APP_FIREBASE_PROJECT_ID;
 const apiKey = process.env.REACT_APP_FIREBASE_API_KEY;
 const appId = process.env.REACT_APP_FIREBASE_APP_ID;
 
-var firebaseConfig = {
+export var firebaseConfig = {
     apiKey: apiKey,
     authDomain: `${projectId}.firebaseapp.com`,
     databaseURL: `https://${projectId}.firebaseio.com`,
@@ -16,6 +15,4 @@ var firebaseConfig = {
     measurementId: "G-TDKC81QLS9"
 };
 
-firebase.initializeApp(firebaseConfig);
-
-export default firebase;
+export default firebaseConfig;

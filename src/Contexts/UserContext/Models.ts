@@ -1,8 +1,9 @@
 export interface IUserContext {
     state: IUserContextState;
-    dispatch: React.Dispatch<any>;
+    dispatch: React.Dispatch<UserContextAction>;
 }
 
+// TODO: May want to move this to a more generic location
 export interface User {
     id: string;
     displayName: string;
