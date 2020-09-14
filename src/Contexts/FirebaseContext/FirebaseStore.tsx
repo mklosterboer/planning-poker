@@ -1,18 +1,15 @@
-import React, { createContext, useEffect, useContext } from 'react'
+import React, { createContext, useContext } from 'react'
 import firebaseConfig from '../../Firebase';
 import Firebase from 'firebase'
 import 'firebase/database';
 
-import { UserStore, UserContextModels } from "../UserContext";
-import { SessionStore } from "../SessionContext";
-import { User } from '../UserContext/Models';
+import { UserStore } from "../UserContext/UserStore";
+// import { SessionStore } from "../SessionContext/SessionStore";
+import { ActionType, User } from '../UserContext/Models';
 
 /* TODO: 
-- figure out types for firebase
-- Maybe just instantiate it the way it is working in Homepage
 - Add actions that point back to the user and session context
 - Complete the cycle of adding a session
-
 */
 
 interface IFirebaseContextState {
@@ -33,8 +30,8 @@ export { FirebaseContext }
 
 const FirebaseProvider: React.FC = ({ children }) => {
 
-    const userContext = useContext(UserStore.UserStore);
-    const sessionStore = useContext(SessionStore.SessionStore);
+    const userContext = useContext(UserStore);
+    // const sessionStore = useContext(SessionStore);
 
     // check if firebase app has been initialized previously
     // if not, initialize with the config we saved earlier
@@ -45,35 +42,17 @@ const FirebaseProvider: React.FC = ({ children }) => {
         return Firebase.app();
     }
 
-    // function to query Todos from the database and
-    // fire a Redux action to update the items in real-time
-    function getTodos() {
-        getApp().database().ref('todos').on('value', (snapshot) => {
-            const vals = snapshot.val();
-            let _records = [];
-            for (var key in vals) {
-                _records.push({
-                    ...vals[key],
-                    id: key
-                });
-            }
-            // setTodos is a Redux action that would update the todo store
-            // to the _records payload
-            // dispatch(setTodos(_records));
-        })
-    }
-
     function getDbValue() {
         getApp().database().ref("test").on('value', (snapshot) => {
             const vals = snapshot.val();
 
-            const newUser: UserContextModels.User = {
+            const newUser: User = {
                 id: "1",
                 sessionId: "1",
                 displayName: vals["-MGLL4bldy3BSZ-f7kyD"]
             }
 
-            userContext.dispatch({ type: UserContextModels.ActionType.SET_USER, user: newUser });
+            userContext.dispatch({ type: ActionType.SET_USER, user: newUser });
         });
     }
 
@@ -104,7 +83,7 @@ const FirebaseProvider: React.FC = ({ children }) => {
 
                 userContext.dispatch(
                     {
-                        type: UserContextModels.ActionType.SET_USER,
+                        type: ActionType.SET_USER,
                         user: _records[latestVal - 1]
                     })
             });

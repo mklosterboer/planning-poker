@@ -2,22 +2,16 @@ import React, { useContext } from "react";
 import "../App.css";
 // import firebase from "../Firebase";
 import { Row, Col, Button } from "react-bootstrap";
-import { UserStore } from "../Contexts/UserContext";
+import { UserStore } from "../Contexts/UserContext/UserStore";
 import { FirebaseContext } from "../Contexts/FirebaseContext/FirebaseStore";
 
 function HomePage() {
     // const [dbValue, setDbValue] = React.useState("initialValue");
 
-    const { state } = useContext(UserStore.UserStore);
+    const { state } = useContext(UserStore);
     const { api } = useContext(FirebaseContext);
 
     React.useEffect(() => {
-        // const fbRef = firebase.database().ref("test");
-
-        // fbRef.on("value", snapshot => {
-        //     let fbValue = snapshot.val();
-        //     setDbValue(fbValue);
-        // });
         api?.getDbValue();
         api?.getUsers();
     }, []);
@@ -26,7 +20,7 @@ function HomePage() {
         api?.addUser({
             id: "123",
             sessionId: "321",
-            displayName: "New User 4"
+            displayName: "New User 5"
         });
     }
 

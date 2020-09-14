@@ -5,21 +5,21 @@ import { Switch, Route } from 'react-router-dom';
 import HomePage from './Components/HomePage';
 import NotFoundPage from './Components/NotFoundPage';
 import { Container } from 'react-bootstrap';
-import { UserStore } from './Contexts/UserContext';
+import { UserProvider } from './Contexts/UserContext/UserStore';
 import FirebaseProvider from './Contexts/FirebaseContext/FirebaseStore';
 
 function App() {
   return (
     <Container fluid>
       {/* <Header /> */}
-      <UserStore.UserProvider>
+      <UserProvider>
         <FirebaseProvider>
           <Switch>
             <Route path="/" exact component={HomePage} />
             <Route component={NotFoundPage} />
           </Switch>
         </FirebaseProvider>
-      </UserStore.UserProvider>
+      </UserProvider>
     </Container>
   );
 }
