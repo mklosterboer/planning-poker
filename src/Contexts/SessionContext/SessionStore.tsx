@@ -2,8 +2,9 @@ import React, { createContext, useReducer } from 'react';
 import { ISessionContext, ISessionContextState, SessionContextAction, ActionType } from './Models';
 
 const initialState: ISessionContextState = {
-    session: null,
-    users: []
+    currentSession: null,
+    users: [],
+    sessions: null
 }
 
 const SessionStore = createContext<ISessionContext>({ state: initialState, dispatch: () => initialState });
@@ -14,11 +15,14 @@ const SessionProvider: React.FC<{}> = (props) => {
         let newState = { ...state };
 
         switch (action.type) {
-            case ActionType.CREATE_SESSION:
-                newState.session = action.session;
+            case ActionType.SET_CURRENT_SESSION:
+                newState.currentSession = action.session;
                 break;
             case ActionType.SET_USERS:
                 newState.users = action.users;
+                break;
+            case ActionType.SET_SESSIONS:
+                newState.sessions = action.sessions;
                 break;
             default:
                 break;

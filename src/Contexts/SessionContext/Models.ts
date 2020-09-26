@@ -23,15 +23,18 @@ export interface Session {
 }
 
 export interface ISessionContextState {
-    session: Session | null;
-    users: User[]
+    currentSession: Session | null;
+    users: User[];
+    sessions: Session[] | null;
 }
 
 export enum ActionType {
-    CREATE_SESSION,
-    SET_USERS
+    SET_CURRENT_SESSION,
+    SET_USERS,
+    SET_SESSIONS
 }
 
 export type SessionContextAction =
-    | { type: ActionType.CREATE_SESSION; session: Session }
+    | { type: ActionType.SET_CURRENT_SESSION; session: Session }
     | { type: ActionType.SET_USERS; users: User[] }
+    | { type: ActionType.SET_SESSIONS; sessions: Session[] }

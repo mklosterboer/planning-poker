@@ -9,6 +9,7 @@ import { UserProvider } from './Contexts/UserContext/UserStore';
 import FirebaseProvider from './Contexts/FirebaseContext/FirebaseStore';
 import { SessionProvider } from './Contexts/SessionContext/SessionStore';
 import { SessionLeader } from './Components/SessionLeader';
+import { JoinSession } from './Components/JoinSession';
 
 function App() {
   return (
@@ -19,7 +20,8 @@ function App() {
           <FirebaseProvider>
             <Switch>
               <Route path="/" exact component={HomePage} />
-              <Route path="/session/:id" component={SessionLeader} />
+              <Route path="/session/:id" exact component={SessionLeader} />
+              <Route path="/session/:id/join" exact component={JoinSession} />
               <Route component={NotFoundPage} />
             </Switch>
           </FirebaseProvider>

@@ -1,12 +1,12 @@
-import React, { createContext, useContext } from 'react'
-import firebaseConfig from '../../Firebase';
-import Firebase from 'firebase'
-import 'firebase/database';
+import React, { createContext, useContext } from "react";
+import firebaseConfig from "../../Firebase";
+import Firebase from "firebase";
+import "firebase/database";
 
 import { UserStore } from "../UserContext/UserStore";
 import { SessionStore } from "../SessionContext/SessionStore";
-import { ActionType as UserActionType, User } from '../UserContext/Models';
-import { ActionType as SessionActionType, Session } from '../SessionContext/Models';
+import { ActionType as UserActionType, User } from "../UserContext/Models";
+import { ActionType as SessionActionType, Session } from "../SessionContext/Models";
 
 /* TODO: 
 - Add actions that point back to the user and session context
@@ -14,25 +14,24 @@ import { ActionType as SessionActionType, Session } from '../SessionContext/Mode
 */
 
 interface IFirebaseContextState {
-    app?: Firebase.app.App,
-    database?: Firebase.database.Database,
+    app?: Firebase.app.App;
+    database?: Firebase.database.Database;
     api?: {
         getDbValue: () => void;
-        setDbValue: (newValue: string) => void;
         addUser: (newUser: User) => void;
         getUsers: () => void;
         createSession: (newSession: Session) => void;
         getUsersForSession: (sessionID: string) => void;
-    }
+        getSessions: () => void;
+    };
 }
 
 // we create a React Context, for this to be accessible
 // from a component later
 const FirebaseContext = createContext<IFirebaseContextState>({});
-export { FirebaseContext }
+export { FirebaseContext };
 
 const FirebaseProvider: React.FC = ({ children }) => {
-
     const userContext = useContext(UserStore);
     const sessionContext = useContext(SessionStore);
 
@@ -46,33 +45,25 @@ const FirebaseProvider: React.FC = ({ children }) => {
     }
 
     function getDbValue() {
-        getApp().database().ref("test").on('value', (snapshot) => {
-            const vals = snapshot.val();
+        getApp()
+            .database()
+            .ref("test")
+            .on("value", snapshot => {
+                const vals = snapshot.val();
 
-            const newUser: User = {
-                id: "1",
-                sessionId: "1",
-                displayName: vals["-MGLL4bldy3BSZ-f7kyD"]
-            }
+                const newUser: User = {
+                    id: "1",
+                    sessionId: "1",
+                    displayName: vals["-MGLL4bldy3BSZ-f7kyD"]
+                };
 
-            userContext.dispatch({ type: UserActionType.SET_USER, user: newUser });
-        });
-    }
-
-    function setDbValue(newValue: string) {
-        getApp().database()
-            .ref(`test/-MGLL4bldy3BSZ-f7kyD`)
-            .set(newValue)
-            .then(() => {
-                // Do nothing
-            })
-            .catch(error => {
-                console.log(error);
+                userContext.dispatch({ type: UserActionType.SET_USER, user: newUser });
             });
     }
 
     function getUsers() {
-        getApp().database()
+        getApp()
+            .database()
             .ref("users")
             .on("value", snapshot => {
                 const vals = snapshot.val();
@@ -84,35 +75,54 @@ const FirebaseProvider: React.FC = ({ children }) => {
 
                 var latestVal = _records.length;
 
-                userContext.dispatch(
-                    {
-                        type: UserActionType.SET_USER,
-                        user: _records[latestVal - 1]
-                    })
+                userContext.dispatch({
+                    type: UserActionType.SET_USER,
+                    user: _records[latestVal - 1]
+                });
+            });
+    }
+
+    function getSessions() {
+        getApp()
+            .database()
+            .ref(`sessions/`)
+            .on("value", snapshot => {
+                const vals = snapshot.val();
+                const _records = [];
+
+                for (let key in vals) {
+                    _records.push(vals[key]);
+                }
+
+                sessionContext.dispatch({
+                    type: SessionActionType.SET_SESSIONS,
+                    sessions: _records
+                });
             });
     }
 
     function getUsersForSession(sessionId: string) {
-        getApp().database()
+        getApp()
+            .database()
             .ref(`users/${sessionId}`)
             .on("value", snapshot => {
                 const vals = snapshot.val();
                 const _records = [];
 
-                for (var key in vals) {
+                for (let key in vals) {
                     _records.push(vals[key]);
                 }
 
-                sessionContext.dispatch(
-                    {
-                        type: SessionActionType.SET_USERS,
-                        users: _records
-                    })
+                sessionContext.dispatch({
+                    type: SessionActionType.SET_USERS,
+                    users: _records
+                });
             });
     }
 
     function addUser(newUser: User) {
-        getApp().database()
+        getApp()
+            .database()
             .ref(`users/${newUser.sessionId}/`)
             .push()
             .set(newUser)
@@ -122,15 +132,14 @@ const FirebaseProvider: React.FC = ({ children }) => {
     }
 
     function createSession(newSession: Session) {
-        getApp().database()
-            .ref("sessions/")
-            .push()
-            .set(newSession, () => {
-                sessionContext.dispatch(
-                    {
-                        type: SessionActionType.CREATE_SESSION,
-                        session: newSession
-                    });
+        getApp()
+            .database()
+            .ref(`sessions/`)
+            .push(newSession, () => {
+                sessionContext.dispatch({
+                    type: SessionActionType.SET_CURRENT_SESSION,
+                    session: newSession
+                });
             })
             .catch(error => {
                 console.log(error);
@@ -142,19 +151,15 @@ const FirebaseProvider: React.FC = ({ children }) => {
         database: getApp().database(),
         api: {
             getDbValue,
-            setDbValue,
             addUser,
             getUsers,
             createSession,
-            getUsersForSession
+            getUsersForSession,
+            getSessions,
         }
-    }
+    };
 
-    return (
-        <FirebaseContext.Provider value={firebaseApp}>
-            {children}
-        </FirebaseContext.Provider>
-    )
-}
+    return <FirebaseContext.Provider value={firebaseApp}>{children}</FirebaseContext.Provider>;
+};
 
 export default FirebaseProvider;

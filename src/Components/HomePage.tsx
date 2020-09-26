@@ -7,7 +7,6 @@ import { SessionStore } from "../Contexts/SessionContext/SessionStore";
 import { useHistory } from "react-router-dom";
 
 function HomePage() {
-    // const [dbValue, setDbValue] = React.useState("initialValue");
     const history = useHistory();
 
     const { state } = useContext(UserStore);
@@ -54,7 +53,7 @@ function HomePage() {
                     <h2>Create a new session</h2>
                     <Button onClick={createSession}>New Session</Button>
                     <div>
-                        Current Session: {sessionState.session?.displayName}
+                        Current Session: {sessionState.currentSession?.displayName}
                     </div>
                 </Col>
                 <Col md="4" className="justify-content-md-center" style={{ display: "flex" }}>
